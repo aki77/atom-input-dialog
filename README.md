@@ -1,4 +1,4 @@
-# atom-input-dialog
+# atom-input-dialog [![Build Status](https://travis-ci.org/aki77/atom-input-dialog.svg?branch=master)](https://travis-ci.org/aki77/atom-input-dialog)
 
 ## InputDialog
 
