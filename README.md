@@ -13,3 +13,14 @@ dialog = new InputDialog({
 })
 dialog.attach()
 ```
+
+### Constructor Params
+
+Pass an optional params object to the constructor with the following keys:
+
+* `callback`
+* `elementClass`
+* `iconClass`
+* `defaultText`
+* `selectedRange`
+* `prompt`
