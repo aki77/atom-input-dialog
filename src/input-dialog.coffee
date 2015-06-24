@@ -2,25 +2,35 @@
 
 module.exports =
 class InputDialog extends View
-  @content: ({prompt}) ->
+  @content: ({prompt} = {}) ->
     @div =>
       @label prompt, class: 'icon', outlet: 'promptText' if prompt
       @subview 'miniEditor', new TextEditorView(mini: true)
       @div class: 'error-message', outlet: 'errorMessage'
 
   initialize: (options = {}) ->
-    {@callback, elementClass, iconClass, defaultText, selectedRange} = options
+    {@callback, elementClass, iconClass, defaultText, selectedRange, detached, validate, match} = options
 
     @element.classList.add(elementClass) if elementClass
     @promptText?.addClass(iconClass) if iconClass
 
     @miniEditor.on 'blur', @close
-    @miniEditor.getModel().onDidChange => @showError()
+    @miniEditor.getModel().onDidChange( =>
+      return @showError() unless validate
+      @showError(validate(@miniEditor.getModel().getText()))
+    )
 
     if defaultText
       @miniEditor.getModel().setText(defaultText)
       if selectedRange
         @miniEditor.getModel().setSelectedBufferRange(selectedRange)
+
+    if match
+      @miniEditor.getModel().onWillInsertText(({cancel, text}) ->
+        cancel() unless text.match(match)
+      )
+
+    @detached = detached if detached
 
     atom.commands.add @element,
       'core:confirm': @confirm

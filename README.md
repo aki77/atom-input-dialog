@@ -24,3 +24,6 @@ Pass an optional params object to the constructor with the following keys:
 * `defaultText`
 * `selectedRange`
 * `prompt`
+* `detached`
+* `validate`
+* `match`
