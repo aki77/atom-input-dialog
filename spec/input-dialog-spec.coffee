@@ -61,19 +61,42 @@ describe 'inputDialog', ->
       miniEditor.insertText('0')
       expect(miniEditor.getText()).toBe('70')
 
-    it "validate", ->
-      validate = (text) ->
-        return 'invalid' unless text.match(/^[a-c]{3}$/)
-        null
+    describe 'validate', ->
+      it "required", ->
+        miniEditor.setText('')
+        atom.commands.dispatch(inputDialog.element, 'core:confirm')
+        expect(inputDialog.callback).not.toHaveBeenCalled()
+        expect(inputDialog.errorMessage.text()).toEqual('required')
 
-      inputDialog = new InputDialog({validate})
-      miniEditor = inputDialog.miniEditor.getModel()
+      it "not required", ->
+        success = false
 
-      expect(inputDialog.errorMessage.text()).toBe('')
-      miniEditor.setText('abc')
-      expect(inputDialog.errorMessage.text()).toBe('')
-      miniEditor.setText('abd')
-      expect(inputDialog.errorMessage.text()).toBe('invalid')
+        inputDialog = new InputDialog(
+          validate: ->
+          callback: ->
+            success = true
+        )
+        miniEditor = inputDialog.miniEditor.getModel()
+
+        miniEditor.setText('')
+        expect(success).toBeFalsy()
+        atom.commands.dispatch(inputDialog.element, 'core:confirm')
+        expect(success).toBeTruthy()
+        expect(inputDialog.errorMessage.text()).toEqual('')
+
+      it "custom", ->
+        validate = (text) ->
+          return 'invalid' unless text.match(/^[a-c]{3}$/)
+          null
+
+        inputDialog = new InputDialog({validate})
+        miniEditor = inputDialog.miniEditor.getModel()
+
+        expect(inputDialog.errorMessage.text()).toBe('')
+        miniEditor.setText('abc')
+        expect(inputDialog.errorMessage.text()).toBe('')
+        miniEditor.setText('abd')
+        expect(inputDialog.errorMessage.text()).toBe('invalid')
 
     describe 'detached', ->
       [ok] = []

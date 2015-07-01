@@ -13,11 +13,11 @@ class InputDialog extends View
 
     @element.classList.add(elementClass) if elementClass
     @promptText?.addClass(iconClass) if iconClass
+    @validate = validate if validate
 
     @miniEditor.on 'blur', @close
     @miniEditor.getModel().onDidChange( =>
-      return @showError() unless validate
-      @showError(validate(@miniEditor.getModel().getText()))
+      @showError(@validate(@miniEditor.getModel().getText()))
     )
 
     if defaultText
@@ -47,9 +47,14 @@ class InputDialog extends View
 
   confirm: =>
     text = @miniEditor.getText()
-    return unless text.length > 0
+    error = @validate(text)
+    return @showError(error) if error
     @callback?(text)
     @close()
+
+  validate: (text) ->
+    return 'required' if text.trim().length is 0
+    null
 
   close: =>
     miniEditorFocused = @miniEditor.hasFocus()
