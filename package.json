@@ -1,6 +1,6 @@
 {
   "name": "@aki77/atom-input-dialog",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "Atom input dialog",
   "main": "src/input-dialog",
   "repository": {
