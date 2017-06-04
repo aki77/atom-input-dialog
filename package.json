@@ -2,11 +2,7 @@
   "name": "@aki77/atom-input-dialog",
   "version": "0.1.3",
   "description": "Atom input dialog",
-  "main": "lib/input-dialog",
-  "scripts": {
-    "prepublish": "coffee -o lib -c src/*",
-    "build": "coffee -o lib -c src/*"
-  },
+  "main": "src/input-dialog",
   "repository": {
     "type": "git",
     "url": "https://github.com/aki77/atom-input-dialog.git"
@@ -15,10 +11,9 @@
     "atom"
   ],
   "license": "MIT",
-  "dependencies": {
-    "atom-space-pen-views": "^2.0.0"
-  },
   "devDependencies": {
-    "coffee-script": "^1.9.3"
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.3.0"
   }
 }

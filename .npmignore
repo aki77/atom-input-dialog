@@ -1,5 +1,4 @@
 spec
-src
 script
 .npmignore
 .DS_Store
@@ -8,3 +7,4 @@ npm-debug.log
 .pairs
 Gruntfile.coffee
 coffeelint.json
+.eslintrc

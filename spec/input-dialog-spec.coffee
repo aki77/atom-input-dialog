@@ -1,4 +1,3 @@
-{$, $$}  = require 'atom-space-pen-views'
 InputDialog = require '../src/input-dialog'
 
 describe 'inputDialog', ->
@@ -13,21 +12,21 @@ describe 'inputDialog', ->
 
       defaultOptions =
         callback: ->
-        prompt: 'enter word'
+        labelText: 'enter word'
         elementClass: 'spec'
-        iconClass: 'icon-file'
+        labelClass: 'icon-file'
         defaultText: 'test.txt'
         selectedRange: [[0, 0], [0, 4]]
 
       inputDialog = new InputDialog(defaultOptions)
 
-      miniEditor = inputDialog.miniEditor.getModel()
+      miniEditor = inputDialog.miniEditor
 
       spyOn(inputDialog, "callback")
 
-    it "prompt", ->
-      {promptText} = inputDialog
-      expect(promptText.html()).toBe('enter word')
+    it "label", ->
+      {label} = inputDialog
+      expect(label.textContent).toBe('enter word')
 
     it "elementClass", ->
       expect(inputDialog.element.classList.contains('spec')).toBeTruthy()
@@ -38,8 +37,8 @@ describe 'inputDialog', ->
       expect(inputDialog.callback).toHaveBeenCalledWith("test")
 
     it "iconClass", ->
-      {promptText} = inputDialog
-      expect(promptText.hasClass('icon-file')).toBeTruthy()
+      {label} = inputDialog
+      expect(label.classList.contains('icon-file')).toBeTruthy()
 
     it "defaultText", ->
       expect(miniEditor.getText()).toBe('test.txt')
@@ -49,9 +48,9 @@ describe 'inputDialog', ->
       miniEditor.insertText('ab')
       expect(miniEditor.getText()).toBe('ab.txt')
 
-    it "match", ->
-      inputDialog = new InputDialog(match: /[0-7]/)
-      miniEditor = inputDialog.miniEditor.getModel()
+    it "textPattern", ->
+      inputDialog = new InputDialog(textPattern: /[0-7]/)
+      miniEditor = inputDialog.miniEditor
 
       expect(miniEditor.getText()).toBe('')
       miniEditor.insertText('8')
@@ -61,59 +60,39 @@ describe 'inputDialog', ->
       miniEditor.insertText('0')
       expect(miniEditor.getText()).toBe('70')
 
-    describe 'validate', ->
+    describe 'validator', ->
       it "required", ->
         miniEditor.setText('')
         atom.commands.dispatch(inputDialog.element, 'core:confirm')
         expect(inputDialog.callback).not.toHaveBeenCalled()
-        expect(inputDialog.errorMessage.text()).toEqual('required')
+        expect(inputDialog.message.textContent).toEqual('required')
 
       it "not required", ->
         success = false
 
         inputDialog = new InputDialog(
-          validate: ->
+          validator: ->
           callback: ->
             success = true
         )
-        miniEditor = inputDialog.miniEditor.getModel()
+        miniEditor = inputDialog.miniEditor
 
         miniEditor.setText('')
         expect(success).toBeFalsy()
         atom.commands.dispatch(inputDialog.element, 'core:confirm')
         expect(success).toBeTruthy()
-        expect(inputDialog.errorMessage.text()).toEqual('')
+        expect(inputDialog.message.textContent).toEqual('')
 
       it "custom", ->
-        validate = (text) ->
+        validator = (text) ->
           return 'invalid' unless text.match(/^[a-c]{3}$/)
           null
 
-        inputDialog = new InputDialog({validate})
-        miniEditor = inputDialog.miniEditor.getModel()
+        inputDialog = new InputDialog({validator})
+        miniEditor = inputDialog.miniEditor
 
-        expect(inputDialog.errorMessage.text()).toBe('')
+        expect(inputDialog.message.textContent).toBe('')
         miniEditor.setText('abc')
-        expect(inputDialog.errorMessage.text()).toBe('')
+        expect(inputDialog.message.textContent).toBe('')
         miniEditor.setText('abd')
-        expect(inputDialog.errorMessage.text()).toBe('invalid')
-
-    describe 'detached', ->
-      [ok] = []
-      detached = ->
-        ok = true
-
-      beforeEach ->
-        ok = false
-
-      it 'not called with detached',  ->
-        inputDialog = new InputDialog()
-        inputDialog.attach()
-        inputDialog.close()
-        expect(ok).toBeFalsy()
-
-      it 'called with detached',  ->
-        inputDialog = new InputDialog({detached})
-        inputDialog.attach()
-        inputDialog.close()
-        expect(ok).toBeTruthy()
+        expect(inputDialog.message.textContent).toBe('invalid')
